@@ -2,6 +2,7 @@ use alloc::vec::Vec;
 use core::fmt::Debug;
 use libsm::sm3::hash::Sm3Hash;
 
+#[derive(Clone)]
 pub struct Sm3(Vec<u8>);
 
 impl Debug for Sm3 {

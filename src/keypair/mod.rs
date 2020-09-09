@@ -87,6 +87,16 @@ impl<
         S: ScalarNumber<Point = P>,
     > Keypair<N, H, P, S>
 {
+    pub fn new(seed: N, public_key: Point<P>, secret_key: Scalar<S>, code: N) -> Self {
+        Self {
+            seed,
+            public_key,
+            secret_key,
+            code,
+            _hash: PhantomData,
+        }
+    }
+
     pub fn generate_from_seed(seed: N) -> Result<Self, CryptoError> {
         let mut hasher = H::default();
         hasher.update(seed.as_ref());
@@ -124,5 +134,23 @@ impl<
 
     pub fn get_code(&self) -> N {
         self.code.clone()
+    }
+}
+
+impl<
+        N: SliceN + AsMut<[u8]>,
+        H: Hasher + Default + Splitable<Half = N>,
+        P: DisLogPoint<Scalar = S>,
+        S: ScalarNumber<Point = P>,
+    > Default for Keypair<N, H, P, S>
+{
+    fn default() -> Self {
+        Self {
+            seed: N::default(),
+            secret_key: Scalar::<S>::default(),
+            public_key: Point::<P>::default(),
+            code: N::default(),
+            _hash: PhantomData,
+        }
     }
 }
